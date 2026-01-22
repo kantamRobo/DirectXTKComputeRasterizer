@@ -1,5 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
+#include <DeviceResources.h>
+#include <wrl.h>
 // í∏ì_ç\ë¢ëÃ
 struct Vertex {
     DirectX::XMFLOAT3 pos;
@@ -24,6 +26,11 @@ class DirectXTKComputeRasterizer
     DirectXTKComputeRasterizer();
     ~DirectXTKComputeRasterizer();
     void Initialize(ID3D11Device* device, ID3D11DeviceContext* context, int screenWidth, int screenHeight);
-	void Render(ID3D11ShaderResourceView* vertexBufferSRV, ID3D11ShaderResourceView* indexBufferSRV, uint32_t triangleCount);
+
+    void Render(DX::DeviceResources* DR, ID3D11ShaderResourceView* vertexBufferSRV, ID3D11ShaderResourceView* indexBufferSRV, uint32_t triangleCount, int screenWidth, int screenHeight);
+   
+    Microsoft::WRL::ComPtr <ID3D11Texture2D> pOutputTexture = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11ComputeShader> pComputeShader;
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pUAV;
 };
 

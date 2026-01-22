@@ -37,3 +37,38 @@ void DirectXTKComputeRasterizer::Initialize(ID3D11Device* device, ID3D11DeviceCo
 }
 
 
+void DirectXTKComputeRasterizer::Render(DX::DeviceResources* DR,ID3D11ShaderResourceView* vertexBufferSRV, ID3D11ShaderResourceView* indexBufferSRV, uint32_t triangleCount, int screenWidth, int screenHeight)
+{
+	auto device = DR->GetD3DDevice();
+	auto context = DR->GetD3DDeviceContext();
+	auto swapChain = DR->GetSwapChain();
+
+	// コンテキストにCSを設定
+	context->CSSetShader(pComputeShader.Get(), nullptr, 0);
+
+	// UAVをスロット0に設定
+	context->CSSetUnorderedAccessViews(0, 1, pUAV.GetAddressOf(), nullptr);
+
+	// Dispatch実行 (スレッドグループ数の計算)
+	// シェーダー側で [numthreads(16, 16, 1)] としているので、画面サイズを16で割る
+	UINT x = (UINT)ceil(screenHeight / 16.0f);
+	UINT y = (UINT)ceil(screenWidth / 16.0f);
+	context->Dispatch(x, y, 1);
+
+	// --- 重要: バックバッファへの転送 ---
+	// UAVに書き込まれた結果をスワップチェーンのバックバッファにコピーします。
+	// ※バックバッファもTexture2Dなので CopyResource が使えます。
+	ID3D11Texture2D* pBackBuffer = nullptr;
+	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBuffer);
+
+	context->CopyResource(pBackBuffer, pOutputTexture.Get());
+
+	// UAVの解除 (次に使うために重要)
+	ID3D11UnorderedAccessView* nullUAV = nullptr;
+	context->CSSetUnorderedAccessViews(0, 1, &nullUAV, nullptr);
+
+	// 表示
+	swapChain->Present(1, 0);
+
+	pBackBuffer->Release();
+}
