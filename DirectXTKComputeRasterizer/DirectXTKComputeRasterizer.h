@@ -7,13 +7,6 @@ struct Vertex {
     DirectX::XMFLOAT2 uv;
 };
 
-// 定数バッファ構造体 (16byte境界に注意)
-struct CBData {
-    DirectX::XMMATRIX worldViewProj;
-    DirectX::XMFLOAT2 screenSize;
-    uint32_t triangleCount;
-    float    padding;
-};
 
 
 // 定数バッファ構造体 (16byte境界に注意)
@@ -27,5 +20,10 @@ struct CBData {
 
 class DirectXTKComputeRasterizer
 {
+    public:
+    DirectXTKComputeRasterizer();
+    ~DirectXTKComputeRasterizer();
+    void Initialize(ID3D11Device* device, ID3D11DeviceContext* context, int screenWidth, int screenHeight);
+	void Render(ID3D11ShaderResourceView* vertexBufferSRV, ID3D11ShaderResourceView* indexBufferSRV, uint32_t triangleCount);
 };
 
