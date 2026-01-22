@@ -16,6 +16,13 @@ struct CBData {
 };
 
 
+// 定数バッファ構造体 (16byte境界に注意)
+struct CBData {
+    DirectX::XMMATRIX worldViewProj;
+    DirectX::XMFLOAT2 screenSize;
+    uint32_t triangleCount;
+    float    padding;
+};
 
 
 class DirectXTKComputeRasterizer
