@@ -93,7 +93,7 @@ void CSMain(uint3 dispatchThreadID : SV_DispatchThreadID)
 
         float w0 = EdgeFunction(s1, s2, p);
         float w1 = EdgeFunction(s2, s0, p);
-        float w2 = EdgeFunction(s0, s1, s2);
+        float w2 = EdgeFunction(s0, s1, p); // ³‚µ‚¢ŒvŽZ
 
         // 5. ŽOŠpŒ`‚Ì“àŠO”»’è
         if (w0 >= 0 && w1 >= 0 && w2 >= 0) {

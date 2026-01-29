@@ -71,14 +71,21 @@ void Game::Render()
         return;
     }
 
-    Clear();
+    // Clear()を呼ばずに直接コンピュートシェーダーでレンダリング
+    // Clear(); <- この行をコメントアウト
 
     m_deviceResources->PIXBeginEvent(L"Render");
-    auto context = m_deviceResources->GetD3DDeviceContext();
 
-    // TODO: Add your rendering code here.
-    context;
-
+    // テスト用の三角形を描画 (引数にnullptrを渡すと自動的にテスト三角形が使われる)
+    m_rasterizer->Render(
+        m_deviceResources.get(), 
+        nullptr,  // nullptrを渡すとテスト三角形が使われる
+        nullptr, 
+        0,  // 0を渡すとテスト三角形の数が使われる
+        static_cast<int>(m_deviceResources->GetScreenViewport().Width),
+        static_cast<int>(m_deviceResources->GetScreenViewport().Height)
+    );
+    
     m_deviceResources->PIXEndEvent();
 
     // Show the new frame.
@@ -166,9 +173,25 @@ void Game::GetDefaultSize(int& width, int& height) const noexcept
 void Game::CreateDeviceDependentResources()
 {
     auto device = m_deviceResources->GetD3DDevice();
-
+	auto context = m_deviceResources->GetD3DDeviceContext();
+	auto width = m_deviceResources->GetOutputSize().right;
+	auto height = m_deviceResources->GetOutputSize().bottom;
     // TODO: Initialize device dependent objects here (independent of window size).
     device;
+	m_rasterizer = std::make_unique<DirectXTKComputeRasterizer>();
+   
+
+    // バックバッファのフォーマットを取得
+    DXGI_FORMAT backBufferFormat = m_deviceResources->GetBackBufferFormat();
+
+    // Initialize に渡す
+    m_rasterizer->Initialize(
+        device,
+        context,
+        width,
+        height,
+        backBufferFormat // ここに追加
+    );
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.

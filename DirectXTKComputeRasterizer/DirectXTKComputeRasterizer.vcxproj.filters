@@ -45,4 +45,7 @@
   <ItemGroup>
     <FxCompile Include="TriangleRasterizer.hlsl" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
 </Project>

@@ -6,7 +6,7 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
-
+#include "DirectXTKComputeRasterizer.h"
 #include <memory>
 
 
@@ -59,7 +59,7 @@ private:
 
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;
-
+	std::unique_ptr<DirectXTKComputeRasterizer> m_rasterizer;
     // Rendering loop timer.
     DX::StepTimer                           m_timer;
 };
